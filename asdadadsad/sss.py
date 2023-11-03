@@ -50,14 +50,8 @@ def play_game(difficulty: str, equation_type: str) -> None:
     equation_type: A string representing the equation type, either "add", "subtract", "multiply", or "divide".
   """
 
-  # Get the number of problems the user wants to solve.
-  num_problems = int(input("How many problems do you want to solve? "))
-
   # Generate a random math equation based on the chosen difficulty and equation type.
   equation = generate_math_equation(difficulty, equation_type)
-
-  # Initialize the score counter.
-  correct_answers = 0
 
   # Set the answer count to 0.
   answer_count = 0
@@ -90,7 +84,6 @@ def play_game(difficulty: str, equation_type: str) -> None:
     # Check if the answer is correct.
     if evaluated_equation == evaluated_answer:
       print("Correct!")
-      correct_answers += 1
       break
     else:
       print("Incorrect.")
@@ -111,12 +104,6 @@ def play_game(difficulty: str, equation_type: str) -> None:
     if answer_count == 3:
       print("You ran out of tries.")
       break
-
-  # Calculate the score.
-  score = correct_answers / num_problems
-
-  # Display the score.
-  print(f"Your score is {score} / {num_problems}")
 
   # Ask the user if they want to play again.
   play_again = input("Do you want to play again? (y/n): ")
