@@ -1,93 +1,156 @@
-import random
-import time
-
-equation_type_to_operator_map = {
-    "add": "+",
-    "subtract": "-",
-    "multiply": "*",
-    "divide": "/",
-}
-
-def generate_math_equation(difficulty: str, equation_type: str) -> str:
-  """Generates a random math equation based on the given difficulty and equation type.
-
-    Args:
-        difficulty: A string representing the difficulty level, either "easy", "moderate", or "hard".
-        equation_type: A string representing the equation type, either "add", "subtract", "multiply", or "divide".
-
-    Returns:
-        A string representing the math equation.
-    """
-    operator = equation_type_to_operator_map[equation_type]
-
-    if difficulty == "easy":
-        # Generate a random single-digit number.
-        num1 = random.randint(0, 9)
-        num2 = random.randint(0, 9)
-    elif difficulty == "moderate":
-        # Generate a random two-digit number.
-        num1 = random.randint(10, 99)
-        num2 = random.randint(10, 99)
-    elif difficulty == "hard":
-        # Generate a random three-digit number.
-        num1 = random.randint(100, 999)
-        num2 = random.randint(100, 999)
-    else:
-        raise ValueError("Invalid difficulty level.")
-
-    # Generate the math equation.
-    equation = f"{num1} {operator} {num2}"
-
-    # Return the math equation as a string.
-    return equation
-
-def play_game(difficulty: str, equation_type: str) -> None:
-  """Plays the math game.
-
-  Args:
-    difficulty: A string representing the difficulty level, either "easy", "moderate", or "hard".
-    equation_type: A string representing the equation type, either "add", "subtract", "multiply", or "divide".
-  """
-
-  # Generate a random math equation based on the chosen difficulty and equation type.
-  equation = generate_math_equation(difficulty, equation_type)
-
-  # Print the equation and ask the user to solve it.
-  print(equation)
-
-  # While the user has not answered correctly, ask the user for an answer.
-  while True:
-
-    # Ask the user for an answer.
-    answer = input("What is the answer? ")
-
-    # Evaluate the equation and the answer separately.
-    evaluated_equation = eval(equation)
-    evaluated_answer = eval(answer)
-
-    # Check if the answer is correct.
-    if evaluated_equation == evaluated_answer:
-      print("Correct!")
-      break
-    else:
-      print("Incorrect.")
-
-  # Ask the user if they want to play again.
-  play_again = input("Do you want to play again? (y/n): ")
-  if play_again == "y":
-    play_game(difficulty, equation_type)
-
-
-
-
-# Start the game.
-print("Welcome to the math game!")
-
-# Prompt the user to choose a difficulty level.
-difficulty = input("Choose a difficulty level (easy, moderate, or hard): ")
-
-# Prompt the user to choose an equation type.
-equation_type = input("Choose an equation type (add, subtract, multiply, or divide): ")
-
-# Play the game.
-play_game(difficulty, equation_type)
+import random,time
+while 1:
+	print("Welcome to Mocha's Math Game.\nYour score is 2,000 divided by your time to correctly solve 10 random questions.")
+	difficulty=0
+	while difficulty!="1" and difficulty!="2" and difficulty!="3":
+		difficulty=input("Enter a difficulty (1,2,3) to start: ")
+		if difficulty!="1" and difficulty!="2" and difficulty!="3":
+			print("Please type 1, 2, or 3. ")
+	difficulty=int(difficulty)
+	score=0
+	begin=time.time()
+	while score<10:
+		#difficulty
+		if difficulty==1:
+			puzzle=random.randint(1,4)
+		elif difficulty==2:
+			puzzle=random.randint(1,6)
+		elif difficulty==3:
+			puzzle=random.randint(1,11)
+		#puzzle choice
+		if puzzle==1:
+			#addition puzzle level 1
+			a=random.randint(0,9)
+			b=random.randint(0,9)
+			try:
+				guess=int(input(str(a)+"+"+str(b)+"=?"))
+			except:
+				guess="mocha"
+			if guess==a+b:
+				score+=1
+				print("Correct!")
+			else:print("Wrong!")
+		elif puzzle==2:
+			#subtraction puzzle level 1
+			a=random.randint(0,9)
+			b=random.randint(0,9)
+			try:
+				guess=int(input(str(a)+"-"+str(b)+"=?"))
+			except:
+				guess="mocha"
+			if guess==a-b:
+				score+=1
+				print("Correct!")
+			else:print("Wrong!")
+		elif puzzle==3:
+			#multiplication puzzle level 1
+			a=random.randint(1,9)
+			b=random.randint(1,9)
+			try:
+				guess=int(input(str(a)+"*"+str(b)+"=?"))
+			except:
+				guess="mocha"
+			if guess==a*b:
+				score+=1
+				print("Correct!")
+			else:print("Wrong!")
+		elif puzzle==4:
+			#division puzzle level 1
+			a=random.randint(1,9)
+			b=random.randint(1,9)
+			try:
+				guess=int(input(str(a*b)+"/"+str(b)+"=?"))
+			except:
+				guess="mocha"
+			if guess==a:
+				score+=1
+				print("Correct!")
+			else:print("Wrong!")
+		elif puzzle==5:
+			#squares puzzle level 1
+			a=random.randint(0,16)
+			try:
+				guess=int(input(str(a)+"^2=?"))
+			except:
+				guess="mocha"
+			if guess==a**2:
+				score+=1
+				print("Correct!")
+			else:print("Wrong!")
+		elif puzzle==6:
+			#square root puzzle level 1
+			a=random.randint(0,16)
+			try:
+				guess=int(input("sqrt("+str(a**2)+")=?"))
+			except:
+				guess="mocha"
+			if guess==a:
+				score+=1
+				print("Correct!")
+			else:print("Wrong!")
+		elif puzzle==7:
+			#linear zero puzzle level 1
+			m=random.randint(1,9)
+			zero=random.randint(-9,9)
+			try:
+				guess=int(input(str(m)+"x+"+str(-m*zero)+"=0, solve for x"))
+			except:
+				guess="mocha"
+			if guess==zero:
+				score+=1
+				print("Correct!")
+			else:print("Wrong!")
+		elif puzzle==8:
+			#addition puzzle level 2
+			a=random.randint(0,19)
+			b=random.randint(0,19)
+			try:
+				guess=int(input(str(a)+"+"+str(b)+"=?"))
+			except:
+				guess="mocha"
+			if guess==a+b:
+				score+=1
+				print("Correct!")
+			else:print("Wrong!")
+		elif puzzle==9:
+			#subtraction puzzle level 2
+			a=random.randint(0,19)
+			b=random.randint(0,19)
+			try:
+				guess=int(input(str(a)+"-"+str(b)+"=?"))
+			except:
+				guess="mocha"
+			if guess==a-b:
+				score+=1
+				print("Correct!")
+			else:print("Wrong!")
+		elif puzzle==10:
+			#multiplication puzzle level 2
+			a=random.randint(10,19)
+			b=random.randint(1,19)
+			try:
+				guess=int(input(str(a)+"*"+str(b)+"=?"))
+			except:
+				guess="mocha"
+			if guess==a*b:
+				score+=1
+				print("Correct!")
+			else:print("Wrong!")
+		elif puzzle==11:
+			#division puzzle level 2
+			a=random.randint(10,19)
+			b=random.randint(1,19)
+			try:
+				guess=int(input(str(a*b)+"/"+str(b)+"=?"))
+			except:
+				guess="mocha"
+			if guess==a:
+				score+=1
+				print("Correct!")
+			else:print("Wrong!")
+	end=time.time()
+	score=str(round(2000/(end-begin)))
+	#recording score
+	open("math.csv", "a").write("\n"+str(round(end))+","+str(difficulty)+","+score)
+	#displaying
+	input("Your final score is "+score+".")

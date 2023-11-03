@@ -1,84 +1,136 @@
 import random
+import time
 
-# Define the different equations
-EQUATIONS = {
-    "addition": "+",
-    "subtraction": "-",
-    "multiplication": "*",
-    "division": "/"
+equation_type_to_operator_map = {
+    "add": "+",
+    "subtract": "-",
+    "multiply": "*",
+    "divide": "/",
 }
 
-# Define the different difficulty levels
-DIFFICULTY_LEVELS = {
-    "easy": {
-        "range": (1, 11),
-        "chances": 3
-    },
-    "moderate": {
-        "range": (11, 101),
-        "chances": 3
-    },
-    "difficult": {
-        "range": (101, 1001),
-        "chances": 3,
-        "time_limit": 10
-    }
-}
-
-# Define a function to generate a random equation
-def generate_random_equation(equation_type, difficulty_level):
-    """Generates a random equation based on the given equation type and difficulty level.
+def generate_math_equation(difficulty: str, equation_type: str) -> str:
+    """Generates a random math equation based on the given difficulty and equation type.
 
     Args:
-        equation_type: The type of equation to generate, e.g. "addition", "subtraction", "multiplication", or "division".
-        difficulty_level: The difficulty level of the equation to generate, e.g. "easy", "moderate", or "difficult".
+        difficulty: A string representing the difficulty level, either "easy", "moderate", or "hard".
+        equation_type: A string representing the equation type, either "add", "subtract", "multiply", or "divide".
 
     Returns:
-        A random equation tuple, where the first element is the equation string and the second element is the correct answer.
+        A string representing the math equation.
     """
 
-    # Get the range of numbers to use in the equation
-    number_range = DIFFICULTY_LEVELS[difficulty_level]["range"]
+    operator = equation_type_to_operator_map[equation_type]
 
-    # Generate two random numbers within the given range
-    num1 = random.randint(number_range[0], number_range[1])
-    num2 = random.randint(number_range[0], number_range[1])
-
-    # Generate the equation string
-    equation_string = str(num1) + EQUATIONS[equation_type] + str(num2)
-
-    # Calculate the correct answer
-    correct_answer = eval(equation_string)
-
-    return equation_string, correct_answer
-
-# Define a function to play the game
-def play_game():
-    """Plays the math game."""
-
-    # Get the user's desired equation type and difficulty level
-    equation_type = input("Choose an equation type (addition, subtraction, multiplication, or division): ")
-    difficulty_level = input("Choose a difficulty level (easy, moderate, or difficult): ")
-
-    # Generate a random equation
-    equation_string, correct_answer = generate_random_equation(equation_type, difficulty_level)
-
-    # Display the equation to the user
-    print(equation_string)
-
-    # Get the user's answer
-    user_answer = input("Enter your answer: ")
-
-    # Check if the user's answer is correct
-    correct = False
-    if user_answer == str(correct_answer):
-        correct = True
-
-    # Display the results to the user
-    if correct:
-        print("Correct!")
+    if difficulty == "easy":
+        # Generate a random single-digit number.
+        num1 = random.randint(0, 9)
+        num2 = random.randint(0, 9)
+    elif difficulty == "moderate":
+        # Generate a random two-digit number.
+        num1 = random.randint(10, 99)
+        num2 = random.randint(10, 99)
+    elif difficulty == "hard":
+        # Generate a random three-digit number.
+        num1 = random.randint(100, 999)
+        num2 = random.randint(100, 999)
     else:
-        print("Incorrect. The correct answer is", correct_answer)
+        raise ValueError("Invalid difficulty level.")
 
-# Start the game
-play_game()
+    # Generate the math equation.
+    equation = f"{num1} {operator} {num2}"
+
+    # Return the math equation as a string.
+    return equation
+
+def play_game(difficulty: str, equation_type: str) -> None:
+  """Plays the math game.
+
+  Args:
+    difficulty: A string representing the difficulty level, either "easy", "moderate", or "hard".
+    equation_type: A string representing the equation type, either "add", "subtract", "multiply", or "divide".
+  """
+
+  # Get the number of problems the user wants to solve.
+  num_problems = int(input("How many problems do you want to solve? "))
+
+  # Generate a random math equation based on the chosen difficulty and equation type.
+  equation = generate_math_equation(difficulty, equation_type)
+
+  # Initialize the score counter.
+  correct_answers = 0
+
+  # Set the answer count to 0.
+  answer_count = 0
+
+  # Print the equation and ask the user to solve it.
+  print(equation)
+
+  # If the difficulty is hard, set a timer of 10 seconds.
+  if difficulty == "hard":
+    timer = 10
+    start_time = time.time()
+
+  # While the answer count is less than 3 (or the difficulty is easy or moderate), ask the user for an answer.
+  while answer_count < 3 and (difficulty in ["easy", "moderate"] or timer > 0):
+
+    # If the difficulty is hard, print the remaining time.
+    if difficulty == "hard":
+      print(f"Time remaining: {timer:.2f} seconds")
+
+    # Ask the user for an answer.
+    answer = input("What is the answer? ")
+
+    # Increment the answer count.
+    answer_count += 1
+
+    # Evaluate the equation and the answer separately.
+    evaluated_equation = eval(equation)
+    evaluated_answer = eval(answer)
+
+    # Check if the answer is correct.
+    if evaluated_equation == evaluated_answer:
+      print("Correct!")
+      correct_answers += 1
+      break
+    else:
+      print("Incorrect.")
+
+    # If the difficulty is hard, calculate the remaining time.
+    if difficulty == "hard":
+      remaining_time = timer - (time.time() - start_time)
+
+      # If the timer ran out, tell the user.
+      if remaining_time <= 0:
+        print("Out of time!")
+        break
+
+      # Set the timer to the remaining time.
+      timer = remaining_time
+
+    # If the answer count is equal to 3, tell the user that they ran out of tries and break out of the loop.
+    if answer_count == 3:
+      print("You ran out of tries.")
+      break
+
+  # Calculate the score.
+  score = correct_answers / num_problems
+
+  # Display the score.
+  print(f"Your score is {score} / {num_problems}")
+
+  # Ask the user if they want to play again.
+  play_again = input("Do you want to play again? (y/n): ")
+  if play_again == "y":
+    play_game(difficulty, equation_type)
+
+# Start the game.
+print("Welcome to the math game!")
+
+# Prompt the user to choose a difficulty level.
+difficulty = input("Choose a difficulty level (easy, moderate, or hard): ")
+
+# Prompt the user to choose an equation type.
+equation_type = input("Choose an equation type (add, subtract, multiply, or divide): ")
+
+# Play the game.
+play_game(difficulty, equation_type)
