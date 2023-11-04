@@ -65,9 +65,9 @@ def play_game(difficulty: str, equation_type: str) -> None:
 
     # If the difficulty is easy, remove the answer limit.
     if difficulty == "easy":
-      answer_limit = 3
-    else:
       answer_limit = 1
+    else:
+      answer_limit = 3
 
     # Print the equation and ask the user to solve it.
     print(equation)
@@ -78,7 +78,7 @@ def play_game(difficulty: str, equation_type: str) -> None:
       start_time = time.time()
 
     # While the answer count is less than the answer limit (or the difficulty is easy), ask the user for an answer.
-    while answer_limit > 0 and (difficulty in ["easy", "moderate"] or timer > 0):
+    while answer_limit > 0 and (difficulty in ["easy", "moderate"] or (difficulty == "hard" and timer > 0)):
 
       # If the difficulty is hard, print the remaining time.
       if difficulty == "hard":
@@ -86,9 +86,6 @@ def play_game(difficulty: str, equation_type: str) -> None:
 
       # Ask the user for an answer.
       answer = input("What is the answer? ")
-
-      # Increment the answer count.
-      answer_limit -= 1
 
       # Evaluate the equation and the answer separately.
       evaluated_equation = eval(equation)
@@ -100,7 +97,8 @@ def play_game(difficulty: str, equation_type: str) -> None:
         break
       elif evaluated_equation != evaluated_answer:
         incorrect_answers +=1
-        break
+        answer_limit -= 1
+        continue
 
       # Calculate the remaining time.
       if difficulty == "hard":
