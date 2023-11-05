@@ -99,7 +99,8 @@ def play_game(difficulty: str, equation_type: str) -> None:
                     break
 
                 timer = remaining_time
-
+                
+        #fix the scoring when too many tries.
         if incorrect_answers ==3:
           incorrect_answers -=2
         elif incorrect_answers ==2:
