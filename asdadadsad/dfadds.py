@@ -1,156 +1,124 @@
-import random,time
-while 1:
-	print("Welcome to Mocha's Math Game.\nYour score is 2,000 divided by your time to correctly solve 10 random questions.")
-	difficulty=0
-	while difficulty!="1" and difficulty!="2" and difficulty!="3":
-		difficulty=input("Enter a difficulty (1,2,3) to start: ")
-		if difficulty!="1" and difficulty!="2" and difficulty!="3":
-			print("Please type 1, 2, or 3. ")
-	difficulty=int(difficulty)
-	score=0
-	begin=time.time()
-	while score<10:
-		#difficulty
-		if difficulty==1:
-			puzzle=random.randint(1,4)
-		elif difficulty==2:
-			puzzle=random.randint(1,6)
-		elif difficulty==3:
-			puzzle=random.randint(1,11)
-		#puzzle choice
-		if puzzle==1:
-			#addition puzzle level 1
-			a=random.randint(0,9)
-			b=random.randint(0,9)
-			try:
-				guess=int(input(str(a)+"+"+str(b)+"=?"))
-			except:
-				guess="mocha"
-			if guess==a+b:
-				score+=1
-				print("Correct!")
-			else:print("Wrong!")
-		elif puzzle==2:
-			#subtraction puzzle level 1
-			a=random.randint(0,9)
-			b=random.randint(0,9)
-			try:
-				guess=int(input(str(a)+"-"+str(b)+"=?"))
-			except:
-				guess="mocha"
-			if guess==a-b:
-				score+=1
-				print("Correct!")
-			else:print("Wrong!")
-		elif puzzle==3:
-			#multiplication puzzle level 1
-			a=random.randint(1,9)
-			b=random.randint(1,9)
-			try:
-				guess=int(input(str(a)+"*"+str(b)+"=?"))
-			except:
-				guess="mocha"
-			if guess==a*b:
-				score+=1
-				print("Correct!")
-			else:print("Wrong!")
-		elif puzzle==4:
-			#division puzzle level 1
-			a=random.randint(1,9)
-			b=random.randint(1,9)
-			try:
-				guess=int(input(str(a*b)+"/"+str(b)+"=?"))
-			except:
-				guess="mocha"
-			if guess==a:
-				score+=1
-				print("Correct!")
-			else:print("Wrong!")
-		elif puzzle==5:
-			#squares puzzle level 1
-			a=random.randint(0,16)
-			try:
-				guess=int(input(str(a)+"^2=?"))
-			except:
-				guess="mocha"
-			if guess==a**2:
-				score+=1
-				print("Correct!")
-			else:print("Wrong!")
-		elif puzzle==6:
-			#square root puzzle level 1
-			a=random.randint(0,16)
-			try:
-				guess=int(input("sqrt("+str(a**2)+")=?"))
-			except:
-				guess="mocha"
-			if guess==a:
-				score+=1
-				print("Correct!")
-			else:print("Wrong!")
-		elif puzzle==7:
-			#linear zero puzzle level 1
-			m=random.randint(1,9)
-			zero=random.randint(-9,9)
-			try:
-				guess=int(input(str(m)+"x+"+str(-m*zero)+"=0, solve for x"))
-			except:
-				guess="mocha"
-			if guess==zero:
-				score+=1
-				print("Correct!")
-			else:print("Wrong!")
-		elif puzzle==8:
-			#addition puzzle level 2
-			a=random.randint(0,19)
-			b=random.randint(0,19)
-			try:
-				guess=int(input(str(a)+"+"+str(b)+"=?"))
-			except:
-				guess="mocha"
-			if guess==a+b:
-				score+=1
-				print("Correct!")
-			else:print("Wrong!")
-		elif puzzle==9:
-			#subtraction puzzle level 2
-			a=random.randint(0,19)
-			b=random.randint(0,19)
-			try:
-				guess=int(input(str(a)+"-"+str(b)+"=?"))
-			except:
-				guess="mocha"
-			if guess==a-b:
-				score+=1
-				print("Correct!")
-			else:print("Wrong!")
-		elif puzzle==10:
-			#multiplication puzzle level 2
-			a=random.randint(10,19)
-			b=random.randint(1,19)
-			try:
-				guess=int(input(str(a)+"*"+str(b)+"=?"))
-			except:
-				guess="mocha"
-			if guess==a*b:
-				score+=1
-				print("Correct!")
-			else:print("Wrong!")
-		elif puzzle==11:
-			#division puzzle level 2
-			a=random.randint(10,19)
-			b=random.randint(1,19)
-			try:
-				guess=int(input(str(a*b)+"/"+str(b)+"=?"))
-			except:
-				guess="mocha"
-			if guess==a:
-				score+=1
-				print("Correct!")
-			else:print("Wrong!")
-	end=time.time()
-	score=str(round(2000/(end-begin)))
-	#recording score
-	open("math.csv", "a").write("\n"+str(round(end))+","+str(difficulty)+","+score)
-	#displaying
-	input("Your final score is "+score+".")
+import random
+import time
+
+equation_type_to_operator_map = {
+    "add": "+",
+    "subtract": "-",
+    "multiply": "*",
+    "divide": "/",
+}
+
+def get_valid_difficulty():
+    while True:
+        difficulty = input("Choose a difficulty level (easy, moderate, or hard): ")
+        if difficulty in ["easy", "moderate", "hard"]:
+            return difficulty
+        else:
+            print("Invalid input. Try again.")
+
+def get_valid_equation_type():
+    while True:
+        equation_type = input("Choose an equation type (add, subtract, multiply, or divide): ")
+        if equation_type in ["add", "subtract", "multiply", "divide"]:
+            return equation_type
+        else:
+            print("Invalid input. Try again.")
+
+def get_valid_num_problems():
+    while True:
+        try:
+            num_problems = int(input("How many problems do you want to solve? "))
+            if num_problems > 0:
+                return num_problems
+            else:
+                print("Please enter a positive number.")
+        except ValueError:
+            print("Invalid input. Please enter a valid number.")
+
+def generate_math_equation(difficulty: str, equation_type: str) -> str:
+    operator = equation_type_to_operator_map[equation_type]
+
+    if difficulty == "easy":
+        num1 = random.randint(0, 11)
+        num2 = random.randint(0, 11)
+    elif difficulty == "moderate":
+        num1 = random.randint(11, 101)
+        num2 = random.randint(11, 101)
+    elif difficulty == "hard":
+        num1 = random.randint(101, 501)
+        num2 = random.randint(101, 501)
+    else:
+        raise ValueError("Invalid difficulty level.")
+
+    equation = f"{num1} {operator} {num2}"
+    return equation
+
+def play_game(difficulty: str, equation_type: str) -> None:
+    num_problems = get_valid_num_problems()
+    correct_answers = 0
+    incorrect_answers = 0
+
+    while num_problems > 0:
+        equation = generate_math_equation(difficulty, equation_type)
+
+        if difficulty == "easy":
+            answer_limit = 1
+        else:
+            answer_limit = 3
+
+        print(equation)
+
+        if difficulty == "hard":
+            my_time = 10
+
+            for x in range(my_time, 0, -1):
+                seconds = x % 60
+                minutes = int(x / 60) % 60
+                print(f"{minutes:02}: {seconds:02}")
+                time.sleep(1)
+            print("Time's Up!!")  
+            break
+            
+        while answer_limit > 0 and (difficulty in ["easy", "moderate"] or (difficulty == "hard" and my_time > 0)):
+
+            # Prompt the user to enter the answer to the equation.
+            answer = input("What is the answer? ")
+
+            evaluated_equation = eval(equation)
+            evaluated_answer = eval(answer)
+
+        if evaluated_equation == evaluated_answer:
+            correct_answers += 1
+        elif evaluated_equation != evaluated_answer:
+            incorrect_answers += 1
+            answer_limit -= 1
+            continue
+
+        num_problems -= 1
+        
+     #fix the scoring when too many tries.
+        if incorrect_answers ==3:
+          incorrect_answers -=2
+        elif incorrect_answers ==2:
+           incorrect_answers -=1
+        num_problems -= 1
+        
+    # Display the score after completing all the problems.
+    print(f"Your score is {correct_answers} / {correct_answers + incorrect_answers + num_problems}")
+
+    play_again = input("Do you want to play again? (y/n): ")
+    if play_again == "y":
+        play_game(difficulty, equation_type)
+
+
+# Start the game.
+print("Welcome to the math game!")
+
+# Prompt the user to choose a difficulty level.
+difficulty = get_valid_difficulty()
+
+# Prompt the user to choose an equation type.
+equation_type = get_valid_equation_type()
+
+# Play the game.
+play_game(difficulty, equation_type)

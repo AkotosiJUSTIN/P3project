@@ -25,15 +25,15 @@ def get_valid_equation_type():
             print("Invalid input. Try again.")
 
 def get_valid_num_problems():
-    while True:
-        try:
-            num_problems = int(input("How many problems do you want to solve? "))
-            if num_problems > 0:
-                return num_problems
-            else:
-                print("Please enter a positive number.")
-        except ValueError:
-            print("Invalid input. Please enter a valid number.")
+  while True:
+    try:
+      desired_score = int(input("How many problems do you want to solve? "))
+      if desired_score > 0:
+        return desired_score
+      else:
+        print("Please enter a positive number.")
+    except ValueError:
+      print("Invalid input. Please enter a valid number.")
 
 def generate_math_equation(difficulty: str, equation_type: str) -> str:
     operator = equation_type_to_operator_map[equation_type]
@@ -45,18 +45,17 @@ def generate_math_equation(difficulty: str, equation_type: str) -> str:
         num1 = random.randint(10, 99)
         num2 = random.randint(10, 99)
     elif difficulty == "hard":
-        num1 = random.randint(100, 999)
-        num2 = random.randint(100, 999)
+        num1 = random.randint(100, 499)
+        num2 = random.randint(100, 499)
     else:
         raise ValueError("Invalid difficulty level.")
 
     equation = f"{num1} {operator} {num2}"
     return equation
 
-def play_game(difficulty: str, equation_type: str) -> None:
-    num_problems = get_valid_num_problems()
+def play_game(difficulty: str, equation_type: str, desired_score: int) -> None:
+    num_problems = desired_score
     correct_answers = 0
-    incorrect_answers = 0
 
     while num_problems > 0:
         equation = generate_math_equation(difficulty, equation_type)
@@ -82,13 +81,14 @@ def play_game(difficulty: str, equation_type: str) -> None:
             evaluated_answer = eval(answer)
 
             if evaluated_equation == evaluated_answer:
+                print("CORRECT!!")
                 correct_answers += 1
                 break
             elif evaluated_equation != evaluated_answer:
-                incorrect_answers += 1
+                print("INCORRECT!!")
                 answer_limit -= 1
-                continue
-              
+
+                
                 
 
             if difficulty == "hard":
@@ -99,20 +99,14 @@ def play_game(difficulty: str, equation_type: str) -> None:
                     break
 
                 timer = remaining_time
-                
-        #fix the scoring when too many tries.
-        if incorrect_answers ==3:
-          incorrect_answers -=2
-        elif incorrect_answers ==2:
-           incorrect_answers -=1
         num_problems -= 1
 
     # Display the score after completing all the problems.
-    print(f"Your score is {correct_answers} / {correct_answers + incorrect_answers}")
+    print(f"Your score is {correct_answers} / {desired_score}")
 
     play_again = input("Do you want to play again? (y/n): ")
     if play_again == "y":
-        play_game(difficulty, equation_type)
+        play_game(difficulty, equation_type, desired_score)
 
 # Start the game.
 print("Welcome to the math game!")
@@ -123,5 +117,8 @@ difficulty = get_valid_difficulty()
 # Prompt the user to choose an equation type.
 equation_type = get_valid_equation_type()
 
+# Prompt the user to enter the desired score.
+desired_score = get_valid_num_problems()
+
 # Play the game.
-play_game(difficulty, equation_type)
+play_game(difficulty, equation_type, desired_score)
