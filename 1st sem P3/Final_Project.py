@@ -1,143 +1,141 @@
+import tkinter as tk
+from tkinter import messagebox, simpledialog
 import random
 import time
 
-#dictionary of operator type
-operator_type = { "add": "+", "subtract": "-", "multiply": "*", "divide": "/",}
+operator_type = {"add": "+", "subtract": "-", "multiply": "*", "divide": "/"}
 
-#input/get of difficulty
-def get_difficulty():
-    while True:
-        difficulty = input("Choose a difficulty level(easy/moderate/hard)")
-        if difficulty in ["easy", "Moderate", "hard"]:
-            return difficulty
-        else:
-            print("Invalid Input. Try Again.")
+class MathGameGUI:
+    def __init__(self, master):
+        self.master = master
+        self.master.title("Math Mastermind")
 
-#input/get of equation
-def get_equation():
-    while True:
-        equation_type = input("Choose an equation type (add/subtract/multiply/divide): ")
-        if equation_type in ["add", "subtract", "multiply", "divide"]:
-            return equation_type
-        else:
-            print("Invalid Input. Try Again.")
+        self.difficulty_label = tk.Label(master, text="Choose a difficulty level:")
+        self.difficulty_label.pack()
 
-#input/get of number of problems
-def get_num_problems():
-    while True:
+        self.difficulty_var = tk.StringVar()
+        self.difficulty_var.set("easy")
+        self.difficulty_menu = tk.OptionMenu(master, self.difficulty_var, "easy", "moderate", "hard")
+        self.difficulty_menu.pack()
+
+        self.equation_label = tk.Label(master, text="Choose an equation type:")
+        self.equation_label.pack()
+
+        self.equation_var = tk.StringVar()
+        self.equation_var.set("add")
+        self.equation_menu = tk.OptionMenu(master, self.equation_var, "add", "subtract", "multiply", "divide")
+        self.equation_menu.pack()
+
+        self.num_problems_label = tk.Label(master, text="Enter the number of problems:")
+        self.num_problems_label.pack()
+
+        self.num_problems_entry = tk.Entry(master)
+        self.num_problems_entry.pack()
+
+        self.play_button = tk.Button(master, text="Play Game", command=self.start_game)
+        self.play_button.pack()
+
+    def start_game(self):
+        difficulty = self.difficulty_var.get()
+        equation_type = self.equation_var.get()
+
         try:
-            score = int(input("How many problems do you want to solve? "))
-            if score > 0:
-                return score
-            else:
-                print("Please enter a positive number.")
+            desired_score = int(self.num_problems_entry.get())
+            if desired_score <= 0:
+                messagebox.showerror("Error", "Please enter a positive number.")
+                return
         except ValueError:
-            print("Invalid Input. Please Enter A Number.")
+            messagebox.showerror("Error", "Invalid input. Please enter a valid number.")
+            return
 
-#makes equation ex. 1 + 1 and generate numbers according to difficulty
-def make_equation(difficulty, equation_type):
-    operator = operator_type[equation_type]
-    
-    if difficulty == "easy":
-        num1 = random.randint(0,10)
-        num2 = random.randint(0,10)
-    elif difficulty == "moderate":
-        num1 = random.randint(11,100)
-        num2 = random.randint(11,100)
-    elif difficulty == "hard":
-        num1 = random.randint(101,1000)
-        num2 = random.randint(101,1000)
-    else:
-        raise ValueError("Invalid Difficulty Level.")
-    
-    equation = f"{num1} {operator} {num2} "
-    return equation
+        self.master.withdraw()  # Hide the main window
+        self.play_game(difficulty, equation_type, desired_score)
 
-#play math game
-def play(difficulty, equation_type, score):
-    #number to of problems to solve
-    num_problems = score
-    #numbers of correct answers solved
-    correct_answer = 0
-    
-    while num_problems > 0:
-        equation = make_equation(difficulty, equation_type)
-        
-        #limit answers and timer of 10 seconds fo hard difficulty
-        if difficulty == "hard":
-            answer_chance = 3
-            timer = 10
-            time_start = time.time()
-        elif difficulty == "moderate":
-            answer_chance = 3
+    def play_game(self, difficulty, equation_type, desired_score):
+        num_problems = desired_score
+        correct_answer = 0
+
+        while num_problems > 0:
+            equation = self.make_equation(difficulty, equation_type)
+
+            if difficulty == "easy":
+                answer_limit = 1
+            else:
+                answer_limit = 3
+
+            if difficulty == "hard":
+                timer = 10
+                start_time = time.time()
+
+            while answer_limit > 0 and (difficulty in ["easy", "moderate"] or (difficulty == "hard" and timer > 0)):
+                if difficulty == "hard":
+                    print(f"Time remaining: {timer:.1f} seconds")
+
+                answer = simpledialog.askstring("Input", f"What is the answer to: {equation}?")
+
+                try:
+                    result = eval(equation)
+                    rounded_result = round(result, 2)
+                    converted_answer = float(answer)
+
+                    if converted_answer == rounded_result:
+                        messagebox.showinfo("Result", "Correct!")
+                        correct_answer += 1
+                        break
+                    else:
+                        messagebox.showinfo("Result", "Incorrect!")
+                        answer_limit -= 1
+
+                except ValueError:
+                    messagebox.showerror("Error", "Invalid input. Please enter a numeric value.")
+
+                if difficulty == "hard":
+                    remaining_time = timer - (time.time() - start_time)
+
+                    if remaining_time <= 0:
+                        messagebox.showinfo("Time Out", "Out of time!")
+                        break
+
+                    timer = remaining_time
+
+            num_problems -= 1
+
+        # Display the final score
+        messagebox.showinfo("Game Over", f"Your final score is {correct_answer} / {desired_score}")
+
+        # Ask if the user wants to play again
+        play_again = messagebox.askyesno("Play Again", "Do you want to play again?")
+        if play_again:
+            self.master.deiconify()  # Show the main window again
+            self.difficulty_var.set("easy")
+            self.equation_var.set("add")
+            self.num_problems_entry.delete(0, tk.END)
         else:
-            answer_chance = 100
-        
-        #print math problem
-        print(equation)
-        
-        while answer_chance > 0 and (difficulty in ["easy", "moderate"] or (difficulty == "hard" and timer > 0)):
-            if difficulty == "hard":
-                #prints the value of timer (it's 10)
-                print(f"Time remaining: {timer:.1f} seconds")
-            
-            #gets answer
-            answer = input("What is the answer?")
-            #evaluate/solve the equation/math problem
-            result = eval(equation)
-            #round off the answer to 2 decimal point
-            rounded_result = round(result, 2)
-            
-            try:
-                # Convert the user's answer to a float
-                converted_answer = float(answer)
+            self.master.destroy()  # Close the application
 
-                # Compare the user's answer to the correct answer
-                if converted_answer == rounded_result:
-                    print("Correct!!!")
-                    #increment the correct answer
-                    correct_answer +=1
-                    break
-                else:
-                    print("Incorrect!!!")
-                    #decrement the chance of answering
-                    answer_chance -=1
-            #if the user didn't enter a number
-            except ValueError:
-                    print("Invalid input. Please enter a numeric value.")   
+    def make_equation(self, difficulty, equation_type):
+        operator = operator_type[equation_type]
 
-            if difficulty == "hard":
-                #calculate the remaining time since the 10 seconds starts
-                time_remaining = timer - (time.time() - time_start)
-                
-                #check if the time
-                if time_remaining <= 0:
-                    print("Out Of Time!!!")
-                    break
-                #updates the time remaining variable
-                timer = time_remaining
-        #decrements the math problems
-        num_problems -= 1
-    
-    #show score
-    print(f"Your score is {correct_answer} / {score}")
-    
-    #ask if he wants to play again
-    play_again = input("Do you want to play again? If yes, enter <y>: ")
-    if play_again == "y":
-        play(difficulty, equation_type, score)
-        
-# start game
-print("Welcome to Math Mastermind!!!")
+        if difficulty == "easy":
+            num1 = random.randint(0, 10)
+            num2 = random.randint(0, 10)
+        elif difficulty == "moderate":
+            num1 = random.randint(11, 100)
+            num2 = random.randint(11, 100)
+        elif difficulty == "hard":
+            num1 = random.randint(101, 1000)
+            num2 = random.randint(101, 1000)
+        else:
+            raise ValueError("Invalid Difficulty Level.")
 
-#get user difficulty   
-difficulty = get_difficulty()
+        equation = f"{num1} {operator} {num2} "
+        return equation
 
-#get user equation
-equation = get_equation()
+# Create the main Tkinter window
+root = tk.Tk()
 
-#get user number of problems
-score = get_num_problems()
+# Create an instance of the MathGameGUI class
+math_game_gui = MathGameGUI(root)
 
-#play game
-play(difficulty, equation, score)
+# Run the Tkinter event loop
+root.mainloop()
