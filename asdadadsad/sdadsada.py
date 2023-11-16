@@ -110,7 +110,7 @@ def play(difficulty, equation_type, score):
                 #calculate the remaining time since the 10 seconds starts
                 time_remaining = timer - (time.time() - time_start)
                 
-                #check if the time
+                #checks the time
                 if time_remaining <= 0:
                     print("Out Of Time!!!")
                     break
