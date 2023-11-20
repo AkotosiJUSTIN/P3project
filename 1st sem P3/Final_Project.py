@@ -44,10 +44,10 @@ class MathGameGUI:
         try:
             score = int(self.num_problems_entry.get())
             if score <= 0:
-                messagebox.showerror("Error", "Please enter a positive number.")
+                messagebox.showerror("Math Mastermind", "!!!Error!!! \n Please enter a positive number.")
                 return
         except ValueError:
-            messagebox.showerror("Error", "Invalid input. Please enter a valid number.")
+            messagebox.showerror("Math Mastermind", "!!!Error!!! \n Invalid input. Please enter a valid number.")
             return
         # Hide the main window
         self.master.withdraw()  
@@ -73,10 +73,10 @@ class MathGameGUI:
             while answer_chance > 0 and (difficulty in ["easy", "moderate"] or (difficulty == "hard" and timer > 0)):
                 if difficulty == "hard":
                     #prints the value of timer (it's 10) and gets answer
-                    answer = simpledialog.askstring("Input", f"What is the answer to: {equation}?-----Time remaining: {timer:.1f} seconds")
+                    answer = simpledialog.askstring("Math Mastermind", f"What is the answer to: {equation}?-----Time remaining: {timer:.1f} seconds")
                 else:
                     #gets answer(easy, moderate difficulties)
-                    answer = simpledialog.askstring("Input", f"What is the answer to: {equation}?")
+                    answer = simpledialog.askstring("Math Mastermind", f"What is the answer to: {equation}?")
                     
                 try:
                      #evaluate/solve the equation/math problem
@@ -87,24 +87,24 @@ class MathGameGUI:
                     converted_answer = float(answer)
                     # Compare the user's answer to the correct answer
                     if converted_answer == rounded_result:
-                        messagebox.showinfo("Result", "Correct!")
+                        messagebox.showinfo("Math Mastermind", "Correct!")
                         #increment the correct answer
                         correct_answer += 1
                         break
                     else:
-                        messagebox.showinfo("Result", "Incorrect!")
+                        messagebox.showinfo("Math Mastermind", "Incorrect!")
                         #decrement the chance of answering
                         answer_chance -= 1
                 #if the user didn't enter a number
                 except ValueError:
-                    messagebox.showerror("Error", "Invalid input. Please enter a numeric value.")
+                    messagebox.showerror("Math Mastermind", "!!!Error!!! \n Invalid input. Please enter a numeric value.")
 
                 if difficulty == "hard":
                     #calculate the remaining time since the 10 seconds starts
                     time_remaining = timer - (time.time() - time_start)
                     #checks the time
                     if time_remaining <= 0:
-                        messagebox.showinfo("Time Out", "Out of time!")
+                        messagebox.showinfo("Math Mastermind", "Out of time!")
                         break
                     #updates the time remaining variable
                     timer = time_remaining
@@ -112,10 +112,10 @@ class MathGameGUI:
             num_problems -= 1
 
         # Display the score
-        messagebox.showinfo("Game Over", f"Your final score is {correct_answer} / {score}")
+        messagebox.showinfo("Math Mastermind", f"!!!Game Over!!! \n Your final score is {correct_answer} / {score}")
 
         # Ask if the user wants to play again
-        play_again = messagebox.askyesno("Play Again", "Do you want to play again?")
+        play_again = messagebox.askyesno("Math Mastermind", "???Play Again??? \n Do you want to play again?")
         if play_again:
             self.master.deiconify()  # Show the main window again
             self.difficulty_var.set("easy")
