@@ -49,8 +49,8 @@ class MathGameGUI:
         except ValueError:
             messagebox.showerror("Error", "Invalid input. Please enter a valid number.")
             return
-
-        self.master.withdraw()  # Hide the main window
+        # Hide the main window
+        self.master.withdraw()  
         self.play_game(difficulty, equation_type, score)
 
     def play_game(self, difficulty, equation_type, score):
@@ -72,11 +72,12 @@ class MathGameGUI:
 
             while answer_chance > 0 and (difficulty in ["easy", "moderate"] or (difficulty == "hard" and timer > 0)):
                 if difficulty == "hard":
-                    #prints the value of timer (it's 10)
-                    print(f"Time remaining: {timer:.1f} seconds")
-                #gets answer
-                answer = simpledialog.askstring("Input", f"What is the answer to: {equation}?")
-
+                    #prints the value of timer (it's 10) and gets answer
+                    answer = simpledialog.askstring("Input", f"What is the answer to: {equation}?-----Time remaining: {timer:.1f} seconds")
+                else:
+                    #gets answer(easy, moderate difficulties)
+                    answer = simpledialog.askstring("Input", f"What is the answer to: {equation}?")
+                    
                 try:
                      #evaluate/solve the equation/math problem
                     result = eval(equation)
