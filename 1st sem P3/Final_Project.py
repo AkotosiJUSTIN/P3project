@@ -92,7 +92,7 @@ def play_game(difficulty, equation_type, score):
 
         while answer_chance > 0:
             #gets answer(easy, moderate difficulties)
-            answer = simpledialog.askstring("Input", f"What is the answer to: {equation}? \n Chances remaining: {answer_chance}")
+            answer = simpledialog.askstring("Input", f"What is the answer to: {equation}? \n Chances remaining: {answer_chance} \n Score:{correct_answer} / {score}")
             
             #if cancel button is used, the game will break
             if answer is None:
