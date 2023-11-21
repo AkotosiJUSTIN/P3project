@@ -1,103 +1,160 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, simpledialog
 import random
 import time
 
-# Create a map to convert equation type to operator.
-equation_type_to_operator_map = {
-    "add": "+",
-    "subtract": "-",
-    "multiply": "*",
-    "divide": "/"
-}
+# Dictionary of operator type
+operator_type = {"add": "+", "subtract": "-", "multiply": "*", "divide": "/"}
 
-# Get the valid difficulty level from the user.
-def get_valid_difficulty():
-    while True:
-        difficulty = input("Choose a difficulty level (easy, moderate, or hard): ")
-        if difficulty in ["easy", "moderate", "hard"]:
-            return difficulty
+# GUI initialization
+root = tk.Tk()
+root.title("Math Mastermind")
+root.geometry("300x200")
+
+
+#text on top of the drawer
+difficulty_label = tk.Label(root, text="Choose a difficulty level:")
+difficulty_label.pack()
+
+#drawer of difficulties
+difficulty_var = tk.StringVar()
+difficulty_var.set("easy")
+difficulty_menu = tk.OptionMenu(root, difficulty_var, "easy", "moderate", "hard")
+difficulty_menu.pack()
+
+#text on top of the drawer
+equation_label = tk.Label(root, text="Choose an equation type:")
+equation_label.pack()
+
+#drawer of equations
+equation_var = tk.StringVar()
+equation_var.set("add")
+equation_menu = tk.OptionMenu(root, equation_var, "add", "subtract", "multiply", "divide")
+equation_menu.pack()
+
+#text on top of the drawer
+num_problems_label = tk.Label(root, text="Enter the number of problems:")
+num_problems_label.pack()
+
+#box that user can put their answer about how many problems they want to answer
+num_problems_entry = tk.Entry(root)
+num_problems_entry.pack()
+
+# Button to start the game
+def start_game():
+    difficulty = difficulty_var.get()
+    equation_type = equation_var.get()
+
+    try:
+        score = int(num_problems_entry.get())
+        if score <= 0:
+            messagebox.showerror("Error", "Please enter a positive number.")
+            return
+    except ValueError:
+        messagebox.showerror("Error", "Invalid input. Please enter a valid number.")
+        return
+
+    # Hide the main window
+    root.withdraw()
+    play_game(difficulty, equation_type, score)
+
+play_button = tk.Button(root, text="Play Game", command=start_game)
+play_button.pack()
+
+def play_game(difficulty, equation_type, score):
+    num_problems = score
+    correct_answer = 0
+
+    while num_problems > 0:
+        equation = make_equation(difficulty, equation_type)
+
+        #limit answers and timer of 10 seconds fo hard difficulty
+        if difficulty == "hard":
+            answer_chance = 3
+            timer = 10
+            time_start = time.time()
+        elif difficulty == "moderate":
+            answer_chance = 3
         else:
-            print("Invalid input. Try again.")
+            answer_chance = 100
 
-# Generate a random math equation based on the difficulty and equation type.
-def generate_math_equation(difficulty: str, equation_type: str) -> str:
-    operator = equation_type_to_operator_map[equation_type]
+        while answer_chance > 0 and (difficulty in ["easy", "moderate"] or (difficulty == "hard" and timer > 0)):
+            if difficulty == "hard":
+                #prints the value of timer (it's 10) and gets answer
+                answer = simpledialog.askstring("Input", f"What is the answer to: {equation}?-----Time remaining: {timer:.1f} seconds")
+            else:
+                #gets answer(easy, moderate difficulties)
+                answer = simpledialog.askstring("Input", f"What is the answer to: {equation}?")
+
+            #when cancel is clicked, it goes to the next question
+                if answer is None:
+                    break
+                        
+            try:
+                #evaluate/solve the equation/math problem
+                result = eval(equation)
+                #round the answer to two(2) decimal point if applicable
+                rounded_result = round(result, 2)
+                # Convert the user's answer to a float
+                converted_answer = float(answer)
+                # Compare the user's answer to the correct answer
+                if converted_answer == rounded_result:
+                    messagebox.showinfo("Math Mastermind", "Correct!")
+                    #increment the correct answer
+                    correct_answer += 1
+                    break
+                else:
+                    messagebox.showinfo("Math Mastermind", "Incorrect!")
+                    #decrement the chance of answering
+                    answer_chance -= 1
+            #if the user didn't enter a number
+            except ValueError:
+                messagebox.showerror("Math Mastermind", "!!!Error!!! \n Invalid input. Please enter a numeric value.")
+
+                if difficulty == "hard":
+                    #calculate the remaining time since the 10 seconds starts
+                    time_remaining = timer - (time.time() - time_start)
+                    #checks the time
+                    if time_remaining <= 0:
+                        messagebox.showinfo("Math Mastermind", "Out of time!")
+                        break
+                    #updates the time remaining variable
+                    timer = time_remaining
+            #decrements the math problems
+        num_problems -= 1
+
+    # Display the score
+    messagebox.showinfo("Game Over", f"Your final score is {correct_answer} / {score}")
+
+    # Ask if the user wants to play again
+    play_again = messagebox.askyesno("Play Again", "Do you want to play again?")
+    if play_again:
+        root.deiconify()
+        difficulty_var.set("easy")
+        equation_var.set("add")
+        num_problems_entry.delete(0, tk.END)
+    else:
+        # Close the application
+        root.destroy()
+
+#makes equation ex. 1 + 1 and generate numbers according to difficulty
+def make_equation(difficulty, equation_type):
+    operator = operator_type[equation_type]
 
     if difficulty == "easy":
-        num1 = random.randint(0, 9)
-        num2 = random.randint(0, 9)
+        num1 = random.randint(0, 10)
+        num2 = random.randint(0, 10)
     elif difficulty == "moderate":
-        num1 = random.randint(10, 99)
-        num2 = random.randint(10, 99)
+        num1 = random.randint(11, 100)
+        num2 = random.randint(11, 100)
+    elif difficulty == "hard":
+        num1 = random.randint(101, 1000)
+        num2 = random.randint(101, 1000)
     else:
-        num1 = random.randint(100, 999)
-        num2 = random.randint(100, 999)
+        raise ValueError("Invalid Difficulty Level.")
 
-    return f"{num1} {operator} {num2}"
+    equation = f"{num1} {operator} {num2} "
+    return equation
 
-# Convert the math equation to a string format for display.
-def convert_math_equation_to_string(equation: str) -> str:
-    operator = equation_type_to_operator_map[equation_type]
-    return equation.replace(operator, f" {operator} ")
-
-# Define the main game class.
-class MathGame(tk.Tk):
-    def __init__(self):
-        super().__init__()
-
-        self.title("Math Game")
-        self.geometry("400x400")
-
-        self.equation_type = tk.StringVar()
-        self.equation_type.set("add")
-
-        self.difficulty = tk.StringVar()
-        self.difficulty.set("easy")
-
-        self.equation = None
-
-        self.create_widgets()
-
-    def create_widgets(self):
-        tk.Label(self, text="Choose a difficulty level:").pack()
-        tk.Radiobutton(self, text="Easy", variable=self.difficulty, value="easy").pack()
-        tk.Radiobutton(self, text="Moderate", variable=self.difficulty, value="moderate").pack()
-        tk.Radiobutton(self, text="Hard", variable=self.difficulty, value="hard").pack()
-
-        tk.Label(self, text="Choose an equation type:").pack()
-        tk.Radiobutton(self, text="Add", variable=self.equation_type, value="add").pack()
-        tk.Radiobutton(self, text="Subtract", variable=self.equation_type, value="subtract").pack()
-        tk.Radiobutton(self, text="Multiply", variable=self.equation_type, value="multiply").pack()
-        tk.Radiobutton(self, text="Divide", variable=self.equation_type, value="divide").pack()
-
-        tk.Button(self, text="Generate and Display Equation", command=self.generate_and_display_equation).pack()
-        tk.Label(self, text="").pack()
-
-        self.entry = tk.Entry(self)
-        self.entry.pack()
-
-        tk.Button(self, text="Check Answer", command=self.check_answer).pack()
-
-    def generate_and_display_equation(self):
-        self.equation = generate_math_equation(self.difficulty.get(), self.equation_type.get())
-        tk.Label(self, text=f"Solve the equation: {convert_math_equation_to_string(self.equation)}").pack()
-
-    def check_answer(self):
-        answer = self.entry.get()
-        self.entry.delete(0, tk.END)
-
-        if not answer:
-            messagebox.showerror("Error", "No answer entered. Try again.")
-            return
-
-        correct_answer = eval(self.equation)
-
-        if str(correct_answer) == answer:
-            messagebox.showinfo("Correct", "You got it right!")
-        else:
-            messagebox.showerror("Incorrect", f"Sorry, the correct answer is {correct_answer}.")
-
-if __name__ == "__main__":
-    game = MathGame()
-    game.mainloop()
+# Run the tkinter GUI as the game
+root.mainloop()
