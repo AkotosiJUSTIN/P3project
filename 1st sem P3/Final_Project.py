@@ -96,7 +96,7 @@ def start_game():
 play_button = tk.Button(root, text="Play Game", command=start_game)
 play_button['bg']='#000080'
 play_button.pack()
-play_button.config(font=("helvetica",20), border=2, bg="#add8e6", activebackground="#90ee90")
+play_button.config(font=("helvetica",20), border=2, bg="#add8e6", activebackground="#90ee90", fg='#000080')
 
 def play_game(difficulty, equation_type, score):
 
