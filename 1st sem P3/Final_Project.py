@@ -8,6 +8,7 @@ operator_type = {"add": "+", "subtract": "-", "multiply": "*", "divide": "/"}
 
 # GUI initialization
 root = tk.Tk()
+
 root.title("Math Mastermind")
 root.geometry("600x500")
 root['bg']='#add8e6'
@@ -21,7 +22,7 @@ title.pack(pady=40,)
 def show_information():
     information_text = ("Welcome to Math Mastermind!\n\n"
                         "Choose a difficulty level and an equation type.\n"
-                        "Enter the number of problems you want to solve.\n"
+                        "Enter the number of problems you want to solve.(100 LIMIT)\n"
                         "Click 'Play Game' to start the game.\n\n"
                         "For each problem, enter the correct answer within the given chances.\n"
                         "Cancel the game at any time by clicking the 'Cancel' button.\n\n"
@@ -82,6 +83,10 @@ def start_game():
         if score <= 0:
             #if the user put 0 or negative numbers
             messagebox.showerror("Math Mastermind", "                           Error!!                             \n \n          Please enter a positive number.          ")
+            return
+        elif score>=100:
+            #if the user put numbers beyond the limit
+            messagebox.showerror("Math Mastermind", "                           Error!!                             \n \n          Please enter a number below or equal to the limit.          ")
             return
     except ValueError:
         #if the user didn't put number
