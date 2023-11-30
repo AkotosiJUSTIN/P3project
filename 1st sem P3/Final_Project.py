@@ -30,6 +30,7 @@ def show_information():
                         "HEHE    XD")
     
     messagebox.showinfo("Math Mastermind Information", information_text)
+
 #?/info button
 i=15
 j=550
