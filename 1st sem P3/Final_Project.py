@@ -65,7 +65,7 @@ equation_menu.pack()
 equation_menu.config(font=("helvetica",20), border=2, indicator=0, bg="#add8e6", activebackground="#90ee90",  fg='#000080')
 
 #text on top of the drawer
-num_problems_label = tk.Label(root, text="Enter the number of problems:",  fg='#000080', font=("helvetica",20))
+num_problems_label = tk.Label(root, text="Enter the number of problems(limit: 100):",  fg='#000080', font=("helvetica",20))
 num_problems_label['bg']='#add8e6'
 num_problems_label.pack()
 
@@ -85,7 +85,7 @@ def start_game():
             #if the user put 0 or negative numbers
             messagebox.showerror("Math Mastermind", "                           Error!!                             \n \n          Please enter a positive number.          ")
             return
-        elif score>=100:
+        elif score>101:
             #if the user put numbers beyond the limit
             messagebox.showerror("Math Mastermind", "                           Error!!                             \n \n          Please enter a number below or equal to the limit.          ")
             return
