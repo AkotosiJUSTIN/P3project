@@ -8,10 +8,10 @@ operator_type = {"add": "+", "subtract": "-", "multiply": "*", "divide": "/"}
 
 # GUI initialization
 root = tk.Tk()
-
 root.title("Math Mastermind")
 root.geometry("600x500")
 root['bg']='#add8e6'
+root.resizable(height=False, width=False)
 
 #title
 title = tk.Label(root, text="Math Mastermind",fg='#000080', height='1', font=("helvetica",40))
@@ -25,8 +25,9 @@ def show_information():
                         "Enter the number of problems you want to solve.(100 LIMIT)\n"
                         "Click 'Play Game' to start the game.\n\n"
                         "For each problem, enter the correct answer within the given chances.\n"
-                        "Cancel the game at any time by clicking the 'Cancel' button.\n\n"
-                        "Good luck!\n"
+                        "Cancel the game at any time by clicking the 'Cancel' button.\n \n"
+                        "If the answer has a decimal point, round it to two(2).\n \n"
+                        "Good luck!\n \n"
                         "HEHE    XD")
     
     messagebox.showinfo("Math Mastermind Information", information_text)
