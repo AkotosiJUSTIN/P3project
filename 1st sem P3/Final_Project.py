@@ -32,13 +32,11 @@ def show_information():
     messagebox.showinfo("Math Mastermind Information", information_text)
 
 #?/info button
-i=15
-j=550
 info_button = tk.Button(root, text="?", command=show_information)
 info_button['bg']='#000080'
 info_button.pack()
 info_button.config(font=("helvetica",20), border=2, bg="#add8e6", activebackground="#90ee90")
-info_button.place(y=i, x=j)
+info_button.place(y=15, x=550)
 
 #text on top of the drawer
 difficulty_label = tk.Label(root, text="Choose a difficulty level:", fg='#000080', font=("helvetica",20))
@@ -85,9 +83,9 @@ def start_game():
             #if the user put 0 or negative numbers
             messagebox.showerror("Math Mastermind", "                           Error!!                             \n \n          Please enter a positive number.          ")
             return
-        elif score>101:
+        elif score > 100:
             #if the user put numbers beyond the limit
-            messagebox.showerror("Math Mastermind", "                           Error!!                             \n \n          Please enter a number below or equal to the limit.          ")
+            messagebox.showerror("Math Mastermind", "                                        Error!!                             \n \n          Please enter a number below or equal to the limit.          ")
             return
     except ValueError:
         #if the user didn't put number
